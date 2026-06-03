@@ -13,7 +13,7 @@ import {
 	ContextualbarDialog,
 } from '@rocket.chat/ui-client';
 import { useSetting } from '@rocket.chat/ui-contexts';
-import type { ChangeEvent, MouseEvent, RefObject } from 'react';
+import type { ChangeEvent, RefObject, MouseEvent } from 'react';
 import { useCallback, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
