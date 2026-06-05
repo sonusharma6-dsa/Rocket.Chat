@@ -58,6 +58,7 @@ const UserInfoWithData = ({ uid, username, rid, invitationDate, onClose, onClick
 			username,
 			roles = [],
 			statusText,
+			statusExpiresAt,
 			bio,
 			utcOffset,
 			lastLogin,
@@ -88,6 +89,7 @@ const UserInfoWithData = ({ uid, username, rid, invitationDate, onClose, onClick
 			createdAt,
 			status: <ReactiveUserStatus uid={_id} />,
 			statusText,
+			statusExpiresAt,
 			nickname,
 			freeSwitchExtension,
 		};
