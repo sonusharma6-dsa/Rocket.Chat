@@ -1,4 +1,4 @@
-import { Abac } from '@rocket.chat/core-services';
+import { Abac, LDAPEnterprise as LDAPEE } from '@rocket.chat/core-services';
 import { cronJobs } from '@rocket.chat/cron';
 import { License } from '@rocket.chat/license';
 import { Users } from '@rocket.chat/models';
@@ -6,7 +6,6 @@ import { isValidCron } from 'cron-validator';
 import { Meteor } from 'meteor/meteor';
 
 import { settings } from '../../../app/settings/server';
-import { LDAPEE } from '../sdk';
 
 const VIRTRU_PDP_SYNC_JOB = 'ABAC_Virtru_PDP_Sync';
 

@@ -1,3 +1,4 @@
+import { LDAPEnterprise as LDAPEE } from '@rocket.chat/core-services';
 import type { IImportUser, ILDAPEntry, IUser } from '@rocket.chat/core-typings';
 import { cronJobs } from '@rocket.chat/cron';
 import { License } from '@rocket.chat/license';
@@ -10,7 +11,6 @@ import { callbacks } from '../../../server/lib/callbacks';
 import type { LDAPConnection } from '../../../server/lib/ldap/Connection';
 import { logger } from '../../../server/lib/ldap/Logger';
 import { LDAPEEManager } from '../lib/ldap/Manager';
-import { LDAPEE } from '../sdk';
 import { addSettings, ldapIntervalValuesToCronMap } from '../settings/ldap';
 
 Meteor.startup(async () => {
