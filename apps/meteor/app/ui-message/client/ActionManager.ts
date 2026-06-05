@@ -2,7 +2,7 @@ import type { DistributiveOmit } from '@rocket.chat/core-typings';
 import { Emitter } from '@rocket.chat/emitter';
 import { Random } from '@rocket.chat/random';
 import { imperativeModal } from '@rocket.chat/ui-client';
-import type { RouterContext, IActionManager } from '@rocket.chat/ui-contexts';
+import type { RouterContext, IActionManager, ActionButtonUpdatePayload } from '@rocket.chat/ui-contexts';
 import type * as UiKit from '@rocket.chat/ui-kit';
 import { t } from 'i18next';
 import type { ContextType } from 'react';
@@ -16,12 +16,22 @@ import { sdk } from '../../utils/client/lib/SDKClient';
 
 const UiKitModal = lazy(() => import('../../../client/views/modal/uikit/UiKitModal'));
 
+type Events = {
+	'busy': { busy: boolean };
+	'action_button.update': {
+		appId: string;
+		actionId: string;
+		update: { actionId?: string; labelI18n?: string; variant?: 'default' | 'danger'; disabled?: boolean };
+	};
+	[viewId: string]: any;
+};
+
 export class ActionManager implements IActionManager {
 	protected static TRIGGER_TIMEOUT = 5000;
 
 	protected static TRIGGER_TIMEOUT_ERROR = 'TRIGGER_TIMEOUT_ERROR';
 
-	protected events = new Emitter<{ busy: { busy: boolean }; [viewId: string]: any }>();
+	protected events = new Emitter<Events>();
 
 	protected appIdByTriggerId = new Map<string, string | undefined>();
 
@@ -47,6 +57,8 @@ export class ActionManager implements IActionManager {
 
 	public on(eventName: 'busy', listener: ({ busy }: { busy: boolean }) => void): void;
 
+	public on(eventName: 'action_button.update', listener: (payload: ActionButtonUpdatePayload) => void): void;
+
 	public on(eventName: string, listener: (data: any) => void) {
 		return this.events.on(eventName, listener);
 	}
@@ -54,6 +66,8 @@ export class ActionManager implements IActionManager {
 	public off(viewId: string, listener: (data: any) => any): void;
 
 	public off(eventName: 'busy', listener: ({ busy }: { busy: boolean }) => void): void;
+
+	public off(eventName: 'action_button.update', listener: (payload: ActionButtonUpdatePayload) => void): void;
 
 	public off(eventName: string, listener: (data: any) => void) {
 		return this.events.off(eventName, listener);
@@ -212,6 +226,21 @@ export class ActionManager implements IActionManager {
 			case 'contextual_bar.close': {
 				const { view } = interaction;
 				this.disposeView(view.id);
+				break;
+			}
+
+			case 'action_button.update': {
+				const { appId, actionId, update } = interaction;
+				this.events.emit('action_button.update', {
+					appId,
+					actionId,
+					update: {
+						...(update.actionId && { actionId: update.actionId }),
+						...(update.labelI18n && { labelI18n: update.labelI18n }),
+						...(update.variant && { variant: update.variant }),
+						...(update.disabled !== undefined && { disabled: update.disabled }),
+					},
+				});
 				break;
 			}
 

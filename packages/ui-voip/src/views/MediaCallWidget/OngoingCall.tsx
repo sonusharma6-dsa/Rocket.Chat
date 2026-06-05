@@ -17,6 +17,7 @@ import {
 	useInfoSlots,
 } from '../../components';
 import { useMediaCallView } from '../../context/MediaCallViewContext';
+import AppActions from '../../experimental/AppActionButtons/components/AppActions';
 
 const OngoingCall = () => {
 	const { t } = useTranslation();
@@ -55,6 +56,7 @@ const OngoingCall = () => {
 			<WidgetInfo slots={slots} />
 			<WidgetFooter>
 				{keypad}
+				<AppActions />
 				<ButtonGroup large>
 					<ActionButton disabled={connecting || reconnecting} icon='dialpad' label='Dialpad' {...keypadButtonProps} />
 					<ToggleButton label={t('Mute')} icons={['mic', 'mic-off']} titles={[t('Mute'), t('Unmute')]} pressed={muted} onToggle={onMute} />

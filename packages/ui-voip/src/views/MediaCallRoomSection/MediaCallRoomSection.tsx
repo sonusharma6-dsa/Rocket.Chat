@@ -18,6 +18,7 @@ import {
 } from '../../components';
 import { useMediaCallView } from '../../context/MediaCallViewContext';
 import useRoomView from '../../context/useRoomView';
+import { useVisibleAppActions } from '../../experimental/AppActionButtons/hooks/useVisibleAppActions';
 import { usePlayMediaStream } from '../../providers/usePlayMediaStream';
 
 type MediaCallRoomSectionProps = {
@@ -78,6 +79,8 @@ const MediaCallRoomSection = ({ showChat, onToggleChat, user, containerHeight }:
 		setFocusedCard((prev) => (prev === 'local' ? null : 'local'));
 	};
 
+	const visibleActions = useVisibleAppActions();
+
 	if (!peerInfo || 'number' in peerInfo) {
 		return null;
 	}
@@ -132,6 +135,7 @@ const MediaCallRoomSection = ({ showChat, onToggleChat, user, containerHeight }:
 				}
 				rightSlot={
 					<ButtonGroup>
+						{visibleActions}
 						<ActionToggleChat pressed={showChat} onClick={onToggleChat} />
 						<DevicePicker secondary />
 					</ButtonGroup>
