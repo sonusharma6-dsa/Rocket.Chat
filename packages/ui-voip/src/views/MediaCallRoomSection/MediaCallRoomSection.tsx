@@ -17,6 +17,7 @@ import {
 	ActionToggleChat,
 } from '../../components';
 import { useMediaCallView } from '../../context/MediaCallViewContext';
+import { usePeekMediaSessionFeatures } from '../../context/usePeekMediaSessionFeatures';
 import useRoomView from '../../context/useRoomView';
 import { useVisibleAppActions } from '../../experimental/AppActionButtons/hooks/useVisibleAppActions';
 import { usePlayMediaStream } from '../../providers/usePlayMediaStream';
@@ -80,8 +81,12 @@ const MediaCallRoomSection = ({ showChat, onToggleChat, user, containerHeight }:
 	};
 
 	const visibleActions = useVisibleAppActions();
+	const features = usePeekMediaSessionFeatures();
 
-	if (!peerInfo || 'number' in peerInfo) {
+	const screenShareAvailable = features.includes('screen-share');
+	const holdAvailable = features.includes('hold');
+
+	if (!peerInfo || !('userId' in peerInfo) || !peerInfo.userId) {
 		return null;
 	}
 
@@ -142,20 +147,25 @@ const MediaCallRoomSection = ({ showChat, onToggleChat, user, containerHeight }:
 				}
 			>
 				<ToggleButton label={t('Mute')} icons={['mic', 'mic-off']} titles={[t('Mute'), t('Unmute')]} pressed={muted} onToggle={onMute} />
-				<ToggleButton
-					label={t('Hold')}
-					icons={['pause-shape-unfilled', 'pause-shape-unfilled']}
-					titles={[t('Hold'), t('Resume')]}
-					pressed={held}
-					onToggle={onHold}
-				/>
-				<ToggleButton
-					label={t('Share_screen')}
-					icons={['desktop-arrow-up', 'desktop-cross']}
-					titles={[t('Share_screen'), t('Stop_sharing_screen')]}
-					pressed={localScreen?.active ?? false}
-					onToggle={onToggleScreenSharing}
-				/>
+				{holdAvailable && (
+					<ToggleButton
+						label={t('Hold')}
+						icons={['pause-shape-unfilled', 'pause-shape-unfilled']}
+						titles={[t('Hold'), t('Resume')]}
+						pressed={held}
+						onToggle={onHold}
+					/>
+				)}
+				{screenShareAvailable && (
+					<ToggleButton
+						label={t('Share_screen')}
+						icons={['desktop-arrow-up', 'desktop-cross']}
+						titles={[t('Share_screen'), t('Stop_sharing_screen')]}
+						pressed={localScreen?.active ?? false}
+						onToggle={onToggleScreenSharing}
+					/>
+				)}
+
 				<ActionButton disabled={connecting || reconnecting} label={t('Forward')} icon='arrow-forward' onClick={onForward} />
 				<ActionButton label={t('Voice_call__user__hangup', { user: peerInfo.displayName })} icon='phone-off' danger onClick={onEndCall} />
 			</ActionStrip>
